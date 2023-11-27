@@ -3,21 +3,25 @@ const fs = require('fs/promises')
 const inquirer = require('inquirer')
 const generateMarkdown = require('./utils/generateMarkdown')
 const { title } = require('process')
-// THEN a high-quality, professional README.md is generated with the title of 
-//my project and sections entitled Description, Table of Contents, Installation, 
-//Usage, License, Contributing, Tests, and Questions
-
-## Title
-## Description
-## Table of Contents
-## Installation
-## Uses
-## Credits
-## License
-## Badges
 
 
-
+const licenseOptions = {
+    "The MIT License":
+    {
+        name: 'MIT License',
+        badge: "[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)"
+    },
+    "IBM Public License":
+    {
+        name: 'IBM Public License',
+        badge: "[![License: IPL 1.0](https://img.shields.io/badge/License-IPL_1.0-blue.svg)](https://opensource.org/licenses/IPL-1.0)"
+    },
+    "Mozilla Public License":
+    {
+        name: 'Mozilla Public License',
+        badge: "[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)"
+    }
+}
 const questions = [
         {
             type: 'input',
@@ -26,7 +30,7 @@ const questions = [
         },
         {
             type: 'input',
-            message: 'Please enter a short description of your project',
+            message: 'Enter a short description of your project',
             name: 'description'
         },
         {
@@ -36,21 +40,30 @@ const questions = [
         },
         {
             type: 'input',
-            message: 'Please provide instructions for using the application',
-            name: 'instructions'
+            message: 'Provide instructions for using the application',
+            name: 'usage'
+        },
+        {
+            type: 'input',
+            message: 'Enter the name and titles of the person(s) responsible for the project',
+            name: 'credits'
         },
         {
             type: 'list',
-            message: 'Please select the type of license to use for your project',
+            message: 'Please provide instructions for using the application',
             name: 'license',
-            choices: [
-                'MIT',
-                'other',
-                'another',
-            ]
-            
+            choices: Object.keys(licenseOptions)
         },
-        
+        {
+            type: 'input',
+            message: 'Please provide instructions for contribution to this project for future developers',
+            name: 'contribution'
+        },
+        {
+            type: 'input',
+            message: 'Please provide instructions for testing this application',
+            name: 'test'
+        },
     ]
 
 
@@ -59,12 +72,13 @@ function writeToFile(fileName, data) {}
 
 // TODO: Create a function to initialize app
 function init() {
-    // const data = {title: "readMeTitle"}
-    // console.log(generateMarkdown(data))
     inquirer.prompt(questions)
     .then((userInput) => {
         console.log(generateMarkdown(userInput))
-    }
+      
+        const readmeContent = generateMarkdown(userInput)
+        return fs.writeFile('README.md', readmeContent);
+      }
     )
 }
 
