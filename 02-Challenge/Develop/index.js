@@ -2,26 +2,7 @@
 const fs = require('fs/promises')
 const inquirer = require('inquirer')
 const generateMarkdown = require('./utils/generateMarkdown')
-const { title } = require('process')
 
-
-const licenseOptions = {
-    "The MIT License":
-    {
-        name: 'MIT License',
-        badge: "[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)"
-    },
-    "IBM Public License":
-    {
-        name: 'IBM Public License',
-        badge: "[![License: IPL 1.0](https://img.shields.io/badge/License-IPL_1.0-blue.svg)](https://opensource.org/licenses/IPL-1.0)"
-    },
-    "Mozilla Public License":
-    {
-        name: 'Mozilla Public License',
-        badge: "[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)"
-    }
-}
 const questions = [
         {
             type: 'input',
@@ -50,9 +31,13 @@ const questions = [
         },
         {
             type: 'list',
-            message: 'Please provide instructions for using the application',
+            message: 'Please select a license',
             name: 'license',
-            choices: Object.keys(licenseOptions)
+            choices: [
+                'MIT License',
+                'IBM Public License',
+                'Mozilla Public License'
+            ]
         },
         {
             type: 'input',
@@ -66,22 +51,23 @@ const questions = [
         },
     ]
 
-
-// TODO: Create a function to write README file
-function writeToFile(fileName, data) {}
-
 // TODO: Create a function to initialize app
 function init() {
     inquirer.prompt(questions)
     .then((userInput) => {
         console.log(generateMarkdown(userInput))
-      
         const readmeContent = generateMarkdown(userInput)
         return fs.writeFile('README.md', readmeContent);
       }
     )
+    .then(() => {
+        console.log('README.md successfully generated.');
+    })
+    .catch((err) => {
+        console.error('Error generating README:', err);
+    });
 }
 
 // Function call to initialize app
 init();
-    
+
